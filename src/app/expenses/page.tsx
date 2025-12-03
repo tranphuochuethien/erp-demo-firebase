@@ -99,7 +99,12 @@ export default function ExpensesPage() {
       } đã được thêm.`,
     });
     setDialogOpen(false);
-    form.reset();
+    form.reset({
+        item: "",
+        category: "",
+        amount: 0,
+        date: new Date(),
+    });
   }
 
   return (

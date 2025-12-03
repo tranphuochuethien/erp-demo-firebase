@@ -63,6 +63,11 @@ export default function CalendarPage() {
 
   const form = useForm<z.infer<typeof appointmentFormSchema>>({
     resolver: zodResolver(appointmentFormSchema),
+    defaultValues: {
+        client: "",
+        description: "",
+        time: "",
+    }
   });
 
   React.useEffect(() => {
@@ -90,7 +95,7 @@ export default function CalendarPage() {
       )} lúc ${newAppointment.time}.`,
     });
     setDialogOpen(false);
-    form.reset({date: selectedDate});
+    form.reset({client: "", description: "", time: "", date: selectedDate});
   }
 
   const appointmentsForSelectedDay = appointments.filter(

@@ -99,7 +99,12 @@ export default function RevenuePage() {
       } đã được thêm.`,
     });
     setDialogOpen(false);
-    form.reset();
+    form.reset({
+        source: "",
+        category: "",
+        amount: 0,
+        date: new Date(),
+    });
   }
 
   return (

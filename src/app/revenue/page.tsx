@@ -61,19 +61,20 @@ import { revenueData as initialRevenueData, type Revenue } from "@/lib/data";
 import { cn, formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { vi } from "date-fns/locale";
-
-const revenueFormSchema = z.object({
-  source: z.string().min(2, "Nguồn phải có ít nhất 2 ký tự."),
-  category: z.string().min(2, "Danh mục phải có ít nhất 2 ký tự."),
-  amount: z.coerce.number().positive("Số tiền phải là một số dương."),
-  date: z.date({ required_error: "Ngày là bắt buộc." }),
-});
+import { useLanguage } from "@/components/providers/language-provider";
 
 export default function RevenuePage() {
+  const { t, locale } = useLanguage();
   const [revenue, setRevenue] = React.useState<Revenue[]>(initialRevenueData);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const { toast } = useToast();
+
+  const revenueFormSchema = z.object({
+    source: z.string().min(2, t("sourceMin2")),
+    category: z.string().min(2, t("categoryMin2")),
+    amount: z.coerce.number().positive(t("amountPositive")),
+    date: z.date({ required_error: t("dateRequired") }),
+  });
 
   const form = useForm<z.infer<typeof revenueFormSchema>>({
     resolver: zodResolver(revenueFormSchema),
@@ -93,34 +94,37 @@ export default function RevenuePage() {
     };
     setRevenue([newRevenue, ...revenue]);
     toast({
-      title: "Đã thêm doanh thu",
-      description: `${formatCurrency(newRevenue.amount)} từ ${
-        newRevenue.source
-      } đã được thêm.`,
+      title: t("revenueAdded"),
+      description: t("revenueAddedDesc", {
+        amount: formatCurrency(newRevenue.amount),
+        source: newRevenue.source,
+      }),
     });
     setDialogOpen(false);
     form.reset({
-        source: "",
-        category: "",
-        amount: 0,
-        date: new Date(),
+      source: "",
+      category: "",
+      amount: 0,
+      date: new Date(),
     });
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Doanh thu</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("revenue")}</h1>
         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <PlusCircle className="mr-2 h-4 w-4" /> Thêm doanh thu
+              <PlusCircle className="mr-2 h-4 w-4" /> {t("addRevenue")}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Thêm doanh thu</DialogTitle>
-              <DialogDescription>Ghi lại một nguồn thu nhập mới.</DialogDescription>
+              <DialogTitle>{t("addRevenue")}</DialogTitle>
+              <DialogDescription>
+                {t("addRevenueDesc")}
+              </DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form
@@ -132,9 +136,9 @@ export default function RevenuePage() {
                   name="source"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nguồn</FormLabel>
+                      <FormLabel>{t("source")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="ví dụ: Khách hàng X" {...field} />
+                        <Input placeholder={t("sourcePlaceholder")} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -145,9 +149,12 @@ export default function RevenuePage() {
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Danh mục</FormLabel>
+                      <FormLabel>{t("category")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="ví dụ: Phát triển web" {...field} />
+                        <Input
+                          placeholder={t("categoryPlaceholderRevenue")}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,11 +165,18 @@ export default function RevenuePage() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số tiền</FormLabel>
+                      <FormLabel>{t("amount")}</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">$</span>
-                          <Input type="number" placeholder="0.00" className="pl-7" {...field} />
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+                            $
+                          </span>
+                          <Input
+                            type="number"
+                            placeholder="0.00"
+                            className="pl-7"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -174,7 +188,7 @@ export default function RevenuePage() {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Ngày</FormLabel>
+                      <FormLabel>{t("date")}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -186,9 +200,9 @@ export default function RevenuePage() {
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP", { locale: vi })
+                                format(field.value, "PPP", { locale: locale })
                               ) : (
-                                <span>Chọn một ngày</span>
+                                <span>{t("pickDate")}</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -196,12 +210,13 @@ export default function RevenuePage() {
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
-                            locale={vi}
+                            locale={locale}
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
                             disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
+                              date > new Date() ||
+                              date < new Date("1900-01-01")
                             }
                             initialFocus
                           />
@@ -212,7 +227,7 @@ export default function RevenuePage() {
                   )}
                 />
                 <DialogFooter>
-                  <Button type="submit">Lưu doanh thu</Button>
+                  <Button type="submit">{t("saveRevenue")}</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -221,19 +236,21 @@ export default function RevenuePage() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Lịch sử doanh thu</CardTitle>
-          <CardDescription>Nhật ký tất cả các nguồn thu nhập của bạn.</CardDescription>
+          <CardTitle>{t("revenueHistory")}</CardTitle>
+          <CardDescription>
+            {t("revenueHistoryDesc")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nguồn</TableHead>
-                <TableHead>Danh mục</TableHead>
-                <TableHead className="text-right">Ngày</TableHead>
-                <TableHead className="text-right">Số tiền</TableHead>
+                <TableHead>{t("source")}</TableHead>
+                <TableHead>{t("category")}</TableHead>
+                <TableHead className="text-right">{t("date")}</TableHead>
+                <TableHead className="text-right">{t("amount")}</TableHead>
                 <TableHead>
-                  <span className="sr-only">Hành động</span>
+                  <span className="sr-only">{t("actions")}</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -243,7 +260,9 @@ export default function RevenuePage() {
                   <TableCell className="font-medium">{item.source}</TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell className="text-right">
-                    {format(new Date(item.date), "d MMM, yyyy", { locale: vi })}
+                    {format(new Date(item.date), "d MMM, yyyy", {
+                      locale: locale,
+                    })}
                   </TableCell>
                   <TableCell className="text-right text-accent font-semibold">
                     {formatCurrency(item.amount)}
@@ -251,15 +270,21 @@ export default function RevenuePage() {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Chuyển đổi menu</span>
+                          <span className="sr-only">{t("toggleMenu")}</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-                        <DropdownMenuItem>Chỉnh sửa</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive focus:text-destructive">Xóa</DropdownMenuItem>
+                        <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
+                        <DropdownMenuItem>{t("edit")}</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive focus:text-destructive">
+                          {t("delete")}
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

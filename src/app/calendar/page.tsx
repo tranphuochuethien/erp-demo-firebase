@@ -41,33 +41,38 @@ import {
 } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { vi } from "date-fns/locale";
-
-const appointmentFormSchema = z.object({
-  client: z.string().min(2, "Tên khách hàng là bắt buộc."),
-  description: z.string().min(5, "Mô tả phải có ít nhất 5 ký tự."),
-  date: z.date({ required_error: "Ngày hẹn là bắt buộc." }),
-  time: z
-    .string()
-    .regex(
-      /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i,
-      "Vui lòng nhập thời gian hợp lệ (ví dụ: 02:00 PM)."
-    ),
-});
+import { useLanguage } from "@/components/providers/language-provider";
 
 export default function CalendarPage() {
-  const [appointments, setAppointments] = React.useState<Appointment[]>(initialAppointmentData);
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(new Date());
+  const { t, locale } = useLanguage();
+  const [appointments, setAppointments] = React.useState<Appointment[]>(
+    initialAppointmentData
+  );
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+    new Date()
+  );
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const { toast } = useToast();
+
+  const appointmentFormSchema = z.object({
+    client: z.string().min(2, t("clientNameRequired")),
+    description: z.string().min(5, t("descriptionMin5")),
+    date: z.date({ required_error: t("dateRequired") }),
+    time: z
+      .string()
+      .regex(
+        /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i,
+        t("invalidTimeFormat")
+      ),
+  });
 
   const form = useForm<z.infer<typeof appointmentFormSchema>>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
-        client: "",
-        description: "",
-        time: "",
-    }
+      client: "",
+      description: "",
+      time: "",
+    },
   });
 
   React.useEffect(() => {
@@ -88,14 +93,15 @@ export default function CalendarPage() {
       )
     );
     toast({
-      title: "Đã lên lịch cuộc hẹn",
-      description: `Cuộc hẹn với ${newAppointment.client} vào ${format(
-        new Date(newAppointment.date),
-        "PPP", { locale: vi }
-      )} lúc ${newAppointment.time}.`,
+      title: t("appointmentScheduled"),
+      description: t("appointmentScheduledDesc", {
+        client: newAppointment.client,
+        date: format(new Date(newAppointment.date), "PPP", { locale: locale }),
+        time: newAppointment.time,
+      }),
     });
     setDialogOpen(false);
-    form.reset({client: "", description: "", time: "", date: selectedDate});
+    form.reset({ client: "", description: "", time: "", date: selectedDate });
   }
 
   const appointmentsForSelectedDay = appointments.filter(
@@ -109,7 +115,7 @@ export default function CalendarPage() {
       <Card className="lg:col-span-4">
         <CardContent className="p-0 flex justify-center">
           <Calendar
-            locale={vi}
+            locale={locale}
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
@@ -121,23 +127,29 @@ export default function CalendarPage() {
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              {selectedDate ? format(selectedDate, "d MMMM", { locale: vi }) : "Chọn một ngày"}
+              {selectedDate
+                ? format(selectedDate, "d MMMM", { locale: locale })
+                : t("selectDate")}
             </CardTitle>
             <CardDescription>
-              {selectedDate ? format(selectedDate, "eeee", { locale: vi }) : ""}
+              {selectedDate
+                ? format(selectedDate, "eeee", { locale: locale })
+                : ""}
             </CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="gap-1">
                 <PlusCircle className="h-4 w-4" />
-                Mới
+                {t("new")}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Cuộc hẹn mới</DialogTitle>
-                <DialogDescription>Lên lịch một cuộc hẹn mới.</DialogDescription>
+                <DialogTitle>{t("newAppointment")}</DialogTitle>
+                <DialogDescription>
+                  {t("newAppointmentDesc")}
+                </DialogDescription>
               </DialogHeader>
               <Form {...form}>
                 <form
@@ -149,9 +161,12 @@ export default function CalendarPage() {
                     name="client"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Khách hàng</FormLabel>
+                        <FormLabel>{t("client")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="ví dụ: Jane Smith" {...field} />
+                          <Input
+                            placeholder={t("clientPlaceholder")}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -162,10 +177,10 @@ export default function CalendarPage() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Mô tả</FormLabel>
+                        <FormLabel>{t("description")}</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="ví dụ: Họp khởi động dự án"
+                            placeholder={t("descriptionPlaceholder")}
                             {...field}
                           />
                         </FormControl>
@@ -178,11 +193,11 @@ export default function CalendarPage() {
                     name="date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ngày</FormLabel>
+                        <FormLabel>{t("date")}</FormLabel>
                         <p className="text-sm rounded-md border border-input p-2.5 bg-muted">
                           {field.value
-                            ? format(field.value, "PPP", { locale: vi })
-                            : "Chọn một ngày trên lịch"}
+                            ? format(field.value, "PPP", { locale: locale })
+                            : t("selectDateOnCalendar")}
                         </p>
                         <FormMessage />
                       </FormItem>
@@ -193,16 +208,16 @@ export default function CalendarPage() {
                     name="time"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Thời gian</FormLabel>
+                        <FormLabel>{t("time")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="ví dụ: 02:30 CH" {...field} />
+                          <Input placeholder={t("timePlaceholder")} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <DialogFooter>
-                    <Button type="submit">Lên lịch hẹn</Button>
+                    <Button type="submit">{t("scheduleAppointment")}</Button>
                   </DialogFooter>
                 </form>
               </Form>
@@ -243,7 +258,7 @@ export default function CalendarPage() {
           ) : (
             <div className="text-center text-muted-foreground py-10 h-full flex flex-col items-center justify-center">
               <CalendarIcon className="mx-auto h-12 w-12 opacity-50" />
-              <p className="mt-4">Không có cuộc hẹn nào cho ngày này.</p>
+              <p className="mt-4">{t("noAppointmentsForDate")}</p>
             </div>
           )}
         </CardContent>

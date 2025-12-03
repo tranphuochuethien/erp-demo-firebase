@@ -32,7 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { revenueData, type Revenue } from "@/lib/data";
 import { formatCurrency, cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { vi } from "date-fns/locale";
+import { useLanguage } from "@/components/providers/language-provider";
 
 const COLORS = [
   "hsl(var(--chart-1))",
@@ -43,6 +43,7 @@ const COLORS = [
 ];
 
 export default function SalesPage() {
+  const { t, locale } = useLanguage();
   const revenueByCategory = React.useMemo(() => {
     const categoryMap: { [key: string]: number } = {};
     revenueData.forEach((item) => {
@@ -75,13 +76,13 @@ export default function SalesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Thống kê bán hàng</h1>
+      <h1 className="text-3xl font-bold tracking-tight">{t("salesStatistics")}</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Doanh thu theo danh mục</CardTitle>
+            <CardTitle>{t("revenueByCategory")}</CardTitle>
             <CardDescription>
-              Phân tích doanh thu từ các danh mục khác nhau.
+              {t("revenueByCategoryDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -110,16 +111,16 @@ export default function SalesPage() {
                 <Tooltip
                   formatter={(value: number) => formatCurrency(value)}
                 />
-                 <Legend wrapperStyle={{fontSize: "0.8rem"}}/>
+                <Legend wrapperStyle={{ fontSize: "0.8rem" }} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Khách hàng hàng đầu</CardTitle>
+            <CardTitle>{t("topClients")}</CardTitle>
             <CardDescription>
-              Những khách hàng đóng góp doanh thu cao nhất.
+              {t("topClientsDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -127,7 +128,7 @@ export default function SalesPage() {
               {topClients.map((client, index) => (
                 <div key={index} className="flex items-center">
                   <Avatar className="h-10 w-10">
-                     <AvatarImage
+                    <AvatarImage
                       src={`https://picsum.photos/seed/${client.name.replace(
                         /\s/g,
                         ""
@@ -156,19 +157,19 @@ export default function SalesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Lịch sử giao dịch</CardTitle>
+          <CardTitle>{t("transactionHistory")}</CardTitle>
           <CardDescription>
-            Danh sách chi tiết tất cả các giao dịch bán hàng.
+            {t("transactionHistoryDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nguồn</TableHead>
-                <TableHead>Danh mục</TableHead>
-                <TableHead className="text-right">Ngày</TableHead>
-                <TableHead className="text-right">Số tiền</TableHead>
+                <TableHead>{t("source")}</TableHead>
+                <TableHead>{t("category")}</TableHead>
+                <TableHead className="text-right">{t("date")}</TableHead>
+                <TableHead className="text-right">{t("amount")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -177,7 +178,9 @@ export default function SalesPage() {
                   <TableCell className="font-medium">{item.source}</TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell className="text-right">
-                    {format(new Date(item.date), "d MMM, yyyy", { locale: vi })}
+                    {format(new Date(item.date), "d MMM, yyyy", {
+                      locale: locale,
+                    })}
                   </TableCell>
                   <TableCell className="text-right text-accent font-semibold">
                     {formatCurrency(item.amount)}

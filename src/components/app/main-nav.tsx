@@ -7,6 +7,7 @@ import {
   TrendingUp,
   TrendingDown,
   Calendar as CalendarIcon,
+  ShoppingBag,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -43,6 +44,11 @@ export function MainNav({
       label: "Lịch",
       icon: CalendarIcon,
     },
+    {
+        href: "/sales",
+        label: "Bán hàng",
+        icon: ShoppingBag,
+    }
   ];
 
   return (

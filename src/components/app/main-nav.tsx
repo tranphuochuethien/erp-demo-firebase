@@ -16,37 +16,39 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const menuItems = [
     {
       href: "/",
-      label: "Bảng điều khiển",
+      label: t("dashboard"),
       icon: LayoutDashboard,
     },
     {
       href: "/revenue",
-      label: "Doanh thu",
+      label: t("revenue"),
       icon: TrendingUp,
     },
     {
       href: "/expenses",
-      label: "Chi phí",
+      label: t("expenses"),
       icon: TrendingDown,
     },
     {
       href: "/calendar",
-      label: "Lịch",
+      label: t("calendar"),
       icon: CalendarIcon,
     },
     {
         href: "/sales",
-        label: "Bán hàng",
+        label: t("sales"),
         icon: ShoppingBag,
     }
   ];

@@ -1,13 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Appointment } from "@/lib/data";
 import { format } from "date-fns";
-import { vi } from "date-fns/locale";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function UpcomingAppointments({
   appointments,
 }: {
   appointments: Appointment[];
 }) {
+  const { t, locale } = useLanguage();
   const upcoming = appointments
     .filter((a) => new Date(a.date) >= new Date())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -41,13 +42,13 @@ export function UpcomingAppointments({
             </div>
             <div className="ml-auto text-right">
               <p className="font-medium text-sm">{appointment.time}</p>
-              <p className="text-xs text-muted-foreground">{format(new Date(appointment.date), "d MMM", { locale: vi })}</p>
+              <p className="text-xs text-muted-foreground">{format(new Date(appointment.date), "d MMM", { locale: locale })}</p>
             </div>
           </div>
         ))
       ) : (
         <p className="text-sm text-muted-foreground text-center py-8">
-          Không có cuộc hẹn sắp tới.
+          {t("noAppointments")}
         </p>
       )}
     </div>

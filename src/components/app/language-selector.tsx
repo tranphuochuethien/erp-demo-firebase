@@ -24,13 +24,13 @@ export function LanguageSelector() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setLanguage("en")}>
-          {t("english")} {language === "en" && "✓"}
+          <span className="mr-2">🇺🇸</span> {t("english")} {language === "en" && "✓"}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setLanguage("vi")}>
-          {t("vietnamese")} {language === "vi" && "✓"}
+          <span className="mr-2">🇻🇳</span> {t("vietnamese")} {language === "vi" && "✓"}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setLanguage("ja")}>
-          {t("japanese")} {language === "ja" && "✓"}
+          <span className="mr-2">🇯🇵</span> {t("japanese")} {language === "ja" && "✓"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

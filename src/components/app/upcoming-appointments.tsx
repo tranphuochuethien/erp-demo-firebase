@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Appointment } from "@/lib/data";
 import { format } from "date-fns";
+import { vi } from "date-fns/locale";
 
 export function UpcomingAppointments({
   appointments,
@@ -40,13 +41,13 @@ export function UpcomingAppointments({
             </div>
             <div className="ml-auto text-right">
               <p className="font-medium text-sm">{appointment.time}</p>
-              <p className="text-xs text-muted-foreground">{format(new Date(appointment.date), "MMM d")}</p>
+              <p className="text-xs text-muted-foreground">{format(new Date(appointment.date), "d MMM", { locale: vi })}</p>
             </div>
           </div>
         ))
       ) : (
         <p className="text-sm text-muted-foreground text-center py-8">
-          No upcoming appointments.
+          Không có cuộc hẹn sắp tới.
         </p>
       )}
     </div>

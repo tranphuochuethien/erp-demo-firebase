@@ -25,22 +25,22 @@ export function MainNav({
   const menuItems = [
     {
       href: "/",
-      label: "Dashboard",
+      label: "Bảng điều khiển",
       icon: LayoutDashboard,
     },
     {
       href: "/revenue",
-      label: "Revenue",
+      label: "Doanh thu",
       icon: TrendingUp,
     },
     {
       href: "/expenses",
-      label: "Expenses",
+      label: "Chi phí",
       icon: TrendingDown,
     },
     {
       href: "/calendar",
-      label: "Calendar",
+      label: "Lịch",
       icon: CalendarIcon,
     },
   ];

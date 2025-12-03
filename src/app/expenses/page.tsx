@@ -61,12 +61,13 @@ import { expenseData as initialExpenseData, type Expense } from "@/lib/data";
 import { cn, formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { vi } from "date-fns/locale";
 
 const expenseFormSchema = z.object({
-  item: z.string().min(2, "Item name must be at least 2 characters."),
-  category: z.string().min(2, "Category must be at least 2 characters."),
-  amount: z.coerce.number().positive("Amount must be a positive number."),
-  date: z.date({ required_error: "A date is required." }),
+  item: z.string().min(2, "Tên mục phải có ít nhất 2 ký tự."),
+  category: z.string().min(2, "Danh mục phải có ít nhất 2 ký tự."),
+  amount: z.coerce.number().positive("Số tiền phải là một số dương."),
+  date: z.date({ required_error: "Ngày là bắt buộc." }),
 });
 
 export default function ExpensesPage() {
@@ -92,10 +93,10 @@ export default function ExpensesPage() {
     };
     setExpenses([newExpense, ...expenses]);
     toast({
-      title: "Expense Added",
-      description: `${formatCurrency(newExpense.amount)} for ${
+      title: "Đã thêm chi phí",
+      description: `${formatCurrency(newExpense.amount)} cho ${
         newExpense.item
-      } has been added.`,
+      } đã được thêm.`,
     });
     setDialogOpen(false);
     form.reset();
@@ -104,17 +105,17 @@ export default function ExpensesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Expenses</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Chi phí</h1>
         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Expense
+              <PlusCircle className="mr-2 h-4 w-4" /> Thêm chi phí
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Add Expense</DialogTitle>
-              <DialogDescription>Record a new business expense.</DialogDescription>
+              <DialogTitle>Thêm chi phí</DialogTitle>
+              <DialogDescription>Ghi lại một khoản chi phí kinh doanh mới.</DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form
@@ -126,9 +127,9 @@ export default function ExpensesPage() {
                   name="item"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Item/Service</FormLabel>
+                      <FormLabel>Mục/Dịch vụ</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Software Subscription" {...field} />
+                        <Input placeholder="ví dụ: Đăng ký phần mềm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -139,9 +140,9 @@ export default function ExpensesPage() {
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel>Danh mục</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Software" {...field} />
+                        <Input placeholder="ví dụ: Phần mềm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -152,7 +153,7 @@ export default function ExpensesPage() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount</FormLabel>
+                      <FormLabel>Số tiền</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">$</span>
@@ -168,7 +169,7 @@ export default function ExpensesPage() {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>Ngày</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -180,9 +181,9 @@ export default function ExpensesPage() {
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                format(field.value, "PPP", { locale: vi })
                               ) : (
-                                <span>Pick a date</span>
+                                <span>Chọn một ngày</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -190,6 +191,7 @@ export default function ExpensesPage() {
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
+                            locale={vi}
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
@@ -205,7 +207,7 @@ export default function ExpensesPage() {
                   )}
                 />
                 <DialogFooter>
-                  <Button type="submit">Save Expense</Button>
+                  <Button type="submit">Lưu chi phí</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -214,19 +216,19 @@ export default function ExpensesPage() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Expense History</CardTitle>
-          <CardDescription>A log of all your business expenses.</CardDescription>
+          <CardTitle>Lịch sử chi phí</CardTitle>
+          <CardDescription>Nhật ký tất cả các chi phí kinh doanh của bạn.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Item</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead className="text-right">Date</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Mục</TableHead>
+                <TableHead>Danh mục</TableHead>
+                <TableHead className="text-right">Ngày</TableHead>
+                <TableHead className="text-right">Số tiền</TableHead>
                 <TableHead>
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">Hành động</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -236,7 +238,7 @@ export default function ExpensesPage() {
                   <TableCell className="font-medium">{item.item}</TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell className="text-right">
-                    {format(new Date(item.date), "MMM d, yyyy")}
+                    {format(new Date(item.date), "d MMM, yyyy", { locale: vi })}
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {formatCurrency(item.amount)}
@@ -246,13 +248,13 @@ export default function ExpensesPage() {
                       <DropdownMenuTrigger asChild>
                         <Button aria-haspopup="true" size="icon" variant="ghost">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
+                          <span className="sr-only">Chuyển đổi menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
+                        <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+                        <DropdownMenuItem>Chỉnh sửa</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive focus:text-destructive">Xóa</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

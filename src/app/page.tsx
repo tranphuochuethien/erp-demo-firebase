@@ -22,11 +22,11 @@ export default function DashboardPage() {
 
   return (
     <div className="flex-1 space-y-6">
-       <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+       <h1 className="text-3xl font-bold tracking-tight">Bảng điều khiển</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Tổng doanh thu</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -34,13 +34,13 @@ export default function DashboardPage() {
               {formatCurrency(totalRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Based on all recorded income
+              Dựa trên tất cả thu nhập đã ghi
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">Tổng chi phí</CardTitle>
             <TrendingDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -48,13 +48,13 @@ export default function DashboardPage() {
               {formatCurrency(totalExpenses)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Based on all recorded costs
+              Dựa trên tất cả chi phí đã ghi
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Profit</CardTitle>
+            <CardTitle className="text-sm font-medium">Lợi nhuận</CardTitle>
             <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
               {formatCurrency(profit)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Revenue minus expenses
+              Doanh thu trừ chi phí
             </p>
           </CardContent>
         </Card>
@@ -74,8 +74,8 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Financial Overview</CardTitle>
-            <CardDescription>Monthly revenue vs. expenses.</CardDescription>
+            <CardTitle>Tổng quan tài chính</CardTitle>
+            <CardDescription>Doanh thu hàng tháng so với chi phí.</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
             <Overview />
@@ -83,9 +83,9 @@ export default function DashboardPage() {
         </Card>
         <Card className="col-span-4 lg:col-span-3">
           <CardHeader>
-            <CardTitle>Upcoming Appointments</CardTitle>
+            <CardTitle>Các cuộc hẹn sắp tới</CardTitle>
             <CardDescription>
-              You have {upcomingAppointments.length} upcoming appointments.
+              Bạn có {upcomingAppointments.length} cuộc hẹn sắp tới.
             </CardDescription>
           </CardHeader>
           <CardContent>

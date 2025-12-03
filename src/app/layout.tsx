@@ -16,7 +16,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "BizTrack",
-  description: "A basic ERP for small businesses.",
+  description: "Một ERP cơ bản cho các doanh nghiệp nhỏ.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
